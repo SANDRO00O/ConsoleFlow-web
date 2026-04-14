@@ -3,6 +3,11 @@ import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import Markdown from 'react-markdown';
 
+interface ReleaseAsset {
+  name: string;
+  browser_download_url: string;
+}
+
 interface Release {
   id: number;
   name: string;
@@ -11,6 +16,7 @@ interface Release {
   body: string;
   html_url: string;
   prerelease: boolean;
+  assets: ReleaseAsset[];
 }
 
 const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
@@ -81,7 +87,7 @@ export default function App() {
             href="https://github.com/SANDRO00O/ConsoleFlow-mobile" 
             target="_blank" 
             rel="noreferrer"
-            className="flex items-center h-12 gap-2 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-5 text-gray-400 hover:text-white transition-all hover:bg-white/10 shadow-lg shadow-black/20 text-sm font-medium"
+            className="flex items-center h-12 gap-2 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-5 text-gray-400 hover:text-white transition-colors hover:bg-white/10 active:bg-white/20 shadow-lg shadow-black/20 text-sm font-medium"
           >
             <Github className="w-5 h-5" />
             <span className="hidden sm:inline">GitHub</span>
@@ -95,7 +101,9 @@ export default function App() {
           <FadeIn>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300 mb-8">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              v2.0.0 Release
+              {releases.length > 0 
+                ? `${releases[latestStableIndex]?.tag_name || releases[0]?.tag_name} Release` 
+                : 'Loading...'}
             </div>
           </FadeIn>
           
@@ -117,8 +125,10 @@ export default function App() {
           <FadeIn delay={0.3}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a 
-                href="https://github.com/SANDRO00O/ConsoleFlow-mobile/releases/download/latest-build/ConsoleFlow_v2.0.0.apk"
-                className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-xl font-medium hover:bg-gray-200 transition-all active:scale-95 w-full sm:w-auto justify-center"
+                href={releases.length > 0 
+                  ? (releases[latestStableIndex]?.assets?.find(a => a.name.endsWith('.apk'))?.browser_download_url || releases[latestStableIndex]?.html_url || releases[0]?.html_url) 
+                  : 'https://github.com/SANDRO00O/ConsoleFlow-mobile/releases/latest'}
+                className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-xl font-medium hover:bg-gray-200 transition-colors active:bg-gray-300 w-full sm:w-auto justify-center"
               >
                 <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
                 Download APK
@@ -127,7 +137,7 @@ export default function App() {
                 href="https://github.com/SANDRO00O/ConsoleFlow-mobile"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 bg-white/5 text-white border border-white/10 px-8 py-4 rounded-xl font-medium hover:bg-white/10 transition-all active:scale-95 w-full sm:w-auto justify-center"
+                className="flex items-center gap-2 bg-white/5 text-white border border-white/10 px-8 py-4 rounded-xl font-medium hover:bg-white/10 transition-colors active:bg-white/20 w-full sm:w-auto justify-center"
               >
                 <Github className="w-5 h-5" />
                 Source Code
@@ -137,6 +147,34 @@ export default function App() {
         </div>
 
 
+
+        {/* Screenshots */}
+        <div className="max-w-5xl mx-auto mt-32">
+          <FadeIn delay={0.1}>
+            <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-8 text-center">Interface</h2>
+          </FadeIn>
+          <div className="flex overflow-x-auto sm:grid sm:grid-cols-3 snap-x snap-mandatory custom-scrollbar gap-6 pb-8 -mx-6 px-6 sm:mx-0 sm:px-0">
+            {[1, 2, 3].map((num, i) => (
+              <FadeIn key={num} delay={0.2 + (i * 0.1)} className="flex-none w-[75%] sm:w-auto snap-center">
+                <div className="relative mx-auto border-4 border-white/10 rounded-2xl overflow-hidden bg-[#050505] aspect-[9/19.5] shadow-2xl shadow-black/50 group">
+                  {/* Wireframe Top Notch/Speaker */}
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/10 rounded-full z-20"></div>
+                  {/* Wireframe Home Indicator */}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/10 rounded-full z-20"></div>
+                  
+                  <img 
+                    src={`https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/${num}.jpg`} 
+                    alt={`App Interface ${num}`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    onError={(e) => {
+                      e.currentTarget.parentElement!.style.display = 'none';
+                    }}
+                  />
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
 
         {/* Features Bento Grid */}
         <div className="max-w-5xl mx-auto mt-32">
@@ -175,29 +213,6 @@ export default function App() {
                 Add your own custom JavaScript to be executed automatically on every page load. Tailor your debugging environment to your exact needs.
               </p>
             </FadeIn>
-          </div>
-        </div>
-
-        {/* Screenshots */}
-        <div className="max-w-5xl mx-auto mt-32">
-          <FadeIn delay={0.1}>
-            <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-8 text-center">Interface</h2>
-          </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[1, 2, 3].map((num, i) => (
-              <FadeIn key={num} delay={0.2 + (i * 0.1)}>
-                <div className="rounded-2xl overflow-hidden border-2 border-white bg-[#0a0a0a] relative group">
-                  <img 
-                    src={`https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/${num}.jpg`} 
-                    alt={`App Interface ${num}`}
-                    className="w-full h-auto object-contain group-hover:scale-105 transition-all duration-700"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              </FadeIn>
-            ))}
           </div>
         </div>
 
@@ -253,13 +268,23 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-8 mt-10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-sm font-mono">
-            © {new Date().getFullYear()} ConsoleFlow. MIT License.
-          </p>
-          <div className="text-gray-500 text-sm font-mono">
-            Built by <a href="https://karrarnazim.space" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Karrar Nazim</a>
+      <footer className="border-t border-white/5 py-12 mt-10">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col items-center gap-8">
+          <img 
+            src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.png" 
+            alt="ConsoleFlow Banner" 
+            className="w-56 sm:w-64 object-contain drop-shadow-2xl opacity-90 hover:opacity-100 transition-opacity"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
+            <p className="text-gray-500 text-sm font-mono">
+              © {new Date().getFullYear()} ConsoleFlow. MIT License.
+            </p>
+            <div className="text-gray-500 text-sm font-mono">
+              Built by <a href="https://karrarnazim.space" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Karrar Nazim</a>
+            </div>
           </div>
         </div>
       </footer>
