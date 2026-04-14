@@ -95,7 +95,7 @@ export default function App() {
           <FadeIn>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300 mb-8">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              v1.0.0 Release
+              v2.0.0 Release
             </div>
           </FadeIn>
           
@@ -117,7 +117,7 @@ export default function App() {
           <FadeIn delay={0.3}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a 
-                href="https://github.com/SANDRO00O/ConsoleFlow-mobile/releases/download/latest-build/ConsoleFlow_v1.0.0.apk"
+                href="https://github.com/SANDRO00O/ConsoleFlow-mobile/releases/download/latest-build/ConsoleFlow_v2.0.0.apk"
                 className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-xl font-medium hover:bg-gray-200 transition-all active:scale-95 w-full sm:w-auto justify-center"
               >
                 <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
