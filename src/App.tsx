@@ -271,7 +271,7 @@ export default function App() {
       <footer className="border-t border-white/5 py-12 mt-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col items-center gap-8">
           <img 
-            src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.png" 
+            src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.svg" 
             alt="ConsoleFlow Banner" 
             className="w-56 sm:w-64 object-contain drop-shadow-2xl opacity-90 hover:opacity-100 transition-opacity"
             onError={(e) => {
