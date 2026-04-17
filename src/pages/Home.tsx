@@ -3,6 +3,11 @@ import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
 import Markdown from 'react-markdown';
 
+const GITHUB_REPO = 'SANDRO00O/ConsoleFlow-mobile';
+const GITHUB_API = `https://api.github.com/repos/${GITHUB_REPO}/releases`;
+const GITHUB_RAW = `https://raw.githubusercontent.com/${GITHUB_REPO}/master`;
+const GITHUB_URL = `https://github.com/${GITHUB_REPO}`;
+
 interface ReleaseAsset {
   name: string;
   browser_download_url: string;
@@ -33,10 +38,14 @@ const FadeIn = ({ children, delay = 0, className = "" }: { children: React.React
 export default function Home() {
   const [releases, setReleases] = useState<Release[]>([]);
   const [loadingReleases, setLoadingReleases] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
-    fetch('https://api.github.com/repos/SANDRO00O/ConsoleFlow-mobile/releases')
-      .then(res => res.json())
+    fetch(GITHUB_API)
+      .then(res => {
+        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+        return res.json();
+      })
       .then(data => {
         if (Array.isArray(data)) {
           setReleases(data);
@@ -45,11 +54,21 @@ export default function Home() {
       })
       .catch(err => {
         console.error("Failed to fetch releases:", err);
+        setFetchError(true);
         setLoadingReleases(false);
       });
   }, []);
 
   const latestStableIndex = releases.findIndex(r => !r.prerelease);
+  const latestRelease = latestStableIndex >= 0 ? releases[latestStableIndex] : releases[0];
+
+  const downloadUrl = latestRelease?.assets?.find(a => a.name.endsWith('.apk'))?.browser_download_url
+    ?? latestRelease?.html_url
+    ?? `${GITHUB_URL}/releases/latest`;
+
+  const badgeLabel = releases.length > 0
+    ? `${latestRelease?.tag_name ?? ''} Release`
+    : loadingReleases ? 'Loading...' : 'No releases';
 
   return (
     <main className="pt-32 pb-20 px-6 min-h-screen">
@@ -58,9 +77,7 @@ export default function Home() {
         <FadeIn>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300 mb-8">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            {releases.length > 0 
-              ? `${releases[latestStableIndex]?.tag_name || releases[0]?.tag_name} Release` 
-              : 'Loading...'}
+            {badgeLabel}
           </div>
         </FadeIn>
         
@@ -82,16 +99,14 @@ export default function Home() {
         <FadeIn delay={0.3}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a 
-              href={releases.length > 0 
-                ? (releases[latestStableIndex]?.assets?.find(a => a.name.endsWith('.apk'))?.browser_download_url || releases[latestStableIndex]?.html_url || releases[0]?.html_url) 
-                : 'https://github.com/SANDRO00O/ConsoleFlow-mobile/releases/latest'}
+              href={downloadUrl}
               className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-xl font-medium hover:bg-gray-200 transition-colors active:bg-gray-300 w-full sm:w-auto justify-center"
             >
               <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
               Download APK
             </a>
             <a 
-              href="https://github.com/SANDRO00O/ConsoleFlow-mobile"
+              href={GITHUB_URL}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-2 bg-white/5 text-white border border-white/10 px-8 py-4 rounded-xl font-medium hover:bg-white/10 transition-colors active:bg-white/20 w-full sm:w-auto justify-center"
@@ -112,17 +127,15 @@ export default function Home() {
           {[1, 2, 3, 4].map((num, i) => (
             <FadeIn key={num} delay={0.2 + (i * 0.1)} className="flex-none w-[75%] sm:w-auto snap-center">
               <div className="relative mx-auto border-4 border-white/10 rounded-2xl overflow-hidden bg-[#050505] aspect-[9/19.5] shadow-2xl shadow-black/50 group">
-                {/* Wireframe Top Notch/Speaker */}
                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/10 rounded-full z-20"></div>
-                {/* Wireframe Home Indicator */}
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/10 rounded-full z-20"></div>
-                
                 <img 
-                  src={`https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/${num}.jpg`} 
+                  src={`${GITHUB_RAW}/screenshots/${num}.jpg`}
                   alt={`App Interface ${num}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   onError={(e) => {
-                    e.currentTarget.parentElement!.style.display = 'none';
+                    const parent = e.currentTarget.parentElement;
+                    if (parent) parent.style.display = 'none';
                   }}
                 />
               </div>
@@ -180,6 +193,13 @@ export default function Home() {
         <div className="space-y-6">
           {loadingReleases ? (
             <div className="text-center text-gray-500 font-mono text-sm animate-pulse">Loading releases...</div>
+          ) : fetchError ? (
+            <div className="text-center text-gray-500 font-mono text-sm">
+              Could not load releases.{' '}
+              <a href={`${GITHUB_URL}/releases`} target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white underline">
+                View on GitHub
+              </a>
+            </div>
           ) : releases.length > 0 ? (
             releases.map((release, i) => (
               <FadeIn key={release.id} delay={0.2 + (i * 0.1)}>

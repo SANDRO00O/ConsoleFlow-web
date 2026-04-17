@@ -45,7 +45,7 @@ export default function FAQ() {
               className="p-6 rounded-2xl bg-white/[0.02] border border-white/5"
             >
               <h3 className="text-xl font-semibold text-white mb-3">{faq.question}</h3>
-              <p className="text-gray-400 leading-relaxed disabled">{faq.answer}</p>
+              <p className="text-gray-400 leading-relaxed">{faq.answer}</p>
             </motion.div>
           ))}
         </div>
