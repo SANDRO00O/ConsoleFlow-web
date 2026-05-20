@@ -27,16 +27,16 @@ const sections = [
 
 export default function Privacy() {
   return (
-    <div className="mx-auto min-h-screen max-w-5xl px-4 pb-20 sm:px-6">
+    <div className="mx-auto min-h-screen max-w-5xl px-4 pb-20 text-center sm:px-6">
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
         <div className="mb-10 pt-6">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-white">
+          <Link to="/" className="inline-flex items-center justify-center gap-2 text-sm text-gray-500 transition-colors hover:text-white">
             <ChevronRight className="h-4 w-4 rotate-180" />
             Back to home
           </Link>
 
           <div className="mt-8 rounded-[34px] border border-white/8 bg-white/[0.03] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.18)]">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col items-center gap-3">
               <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]">
                 <Shield className="h-6 w-6 text-cyan-300" />
               </span>
@@ -58,13 +58,13 @@ export default function Privacy() {
               className="rounded-[28px] border border-white/8 bg-white/[0.03] p-6"
             >
               <h2 className="text-xl font-semibold tracking-tight text-white">{section.title}</h2>
-              <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-400">{section.body}</p>
+              <p className="mx-auto mt-3 max-w-3xl text-sm leading-7 text-gray-400">{section.body}</p>
             </motion.section>
           ))}
         </div>
 
         <div className="mt-8 rounded-[28px] border border-white/8 bg-gradient-to-br from-white/[0.05] to-white/[0.02] p-6">
-          <p className="text-sm leading-7 text-gray-400">
+          <p className="mx-auto max-w-3xl text-sm leading-7 text-gray-400">
             The app does not use advertising identifiers or user tracking. It is built to keep the browsing and debugging loop local and simple.
           </p>
         </div>

@@ -48,24 +48,24 @@ function Layout({ children }: { children: ReactNode }) {
 
       <main className="relative z-10 pt-24">{children}</main>
 
-      <footer className="relative z-10 mt-16 border-t border-white/8">
+      <footer className="relative z-10 mt-16 border-t border-white/8 text-center">
         <div className="mx-auto max-w-6xl px-6 py-12">
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col items-center gap-8">
             <div className="space-y-4">
               <img
                 src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.svg"
                 alt="ConsoleFlow Banner"
-                className="h-7 w-auto object-contain opacity-90"
+                className="mx-auto h-7 w-auto object-contain opacity-90"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <p className="max-w-xl text-sm leading-6 text-gray-500">
+              <p className="mx-auto max-w-xl text-sm leading-6 text-gray-500">
                 ConsoleFlow is a lightweight Android browser for pages that need inspection, console output, and small testing workflows.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500">
               <span>© {new Date().getFullYear()} ConsoleFlow. MIT License.</span>
               <span className="hidden text-white/20 md:inline">|</span>
               <Link to="/faq" className="transition-colors hover:text-white">
