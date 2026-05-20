@@ -1,82 +1,113 @@
-import { Github } from 'lucide-react';
+import { Github, Sparkles } from 'lucide-react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import FAQ from './pages/FAQ';
 import Privacy from './pages/Privacy';
+import type { ReactNode } from 'react';
 
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-white/20 selection:text-white overflow-x-hidden relative flex flex-col">
-      {/* Dreamy Blurry Gradient Background */}
-      <div 
-        className="absolute top-0 left-0 w-full h-[800px] overflow-hidden pointer-events-none select-none z-0"
-        style={{ 
-          maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)', 
-          WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)' 
-        }}
-      >
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-blue-500/30 blur-[100px] animate-blob"></div>
-        <div className="absolute top-[10%] right-[-5%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full bg-purple-500/30 blur-[100px] animate-blob animation-delay-2000"></div>
-        <div className="absolute top-[20%] left-[15%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-cyan-500/20 blur-[100px] animate-blob animation-delay-4000"></div>
+    <div className="site-shell min-h-screen overflow-x-hidden bg-[#050505] text-gray-200 font-sans selection:bg-white/15 selection:text-white">
+      <div className="site-backdrop pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="site-grid absolute inset-0 opacity-[0.18]" />
+        <div className="site-vignette absolute inset-0" />
+        <div className="site-orb site-orb-a" />
+        <div className="site-orb site-orb-b" />
+        <div className="site-orb site-orb-c" />
       </div>
 
-      {/* Navbar */}
-      <nav className="fixed top-4 w-full z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
-          <Link to="/" className="flex items-center h-12 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full pl-2 pr-5 shadow-lg shadow-black/20 hover:bg-white/5 transition-colors">
-            <div className="w-9 h-9 flex items-center justify-center">
-              <img 
-                src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/app/src/main/res/drawable/ic_splashscreen.png" 
-                alt="ConsoleFlow Logo" 
-                className="w-full h-full object-contain scale-[1.6]"
+      <nav className="fixed top-0 left-0 right-0 z-50">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+          <Link
+            to="/"
+            className="glass-pill group flex h-12 items-center gap-3 rounded-full border border-white/10 bg-black/45 px-2 pr-5 shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-colors hover:bg-white/[0.06]"
+            aria-label="ConsoleFlow home"
+          >
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.04] ring-1 ring-white/10">
+              <img
+                src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/app/src/main/res/drawable/ic_splashscreen.png"
+                alt="ConsoleFlow Logo"
+                className="h-full w-full scale-[1.6] object-contain"
               />
-            </div>
-            <img 
-              src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.svg" 
-              alt="ConsoleFlow" 
-              className="h-4 sm:h-5 w-auto object-contain z-10 ml-2"
+            </span>
+            <img
+              src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.svg"
+              alt="ConsoleFlow"
+              className="h-4 w-auto object-contain opacity-95 transition-opacity group-hover:opacity-100 sm:h-5"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
           </Link>
-          
-          <a 
-            href="https://github.com/SANDRO00O/ConsoleFlow-mobile" 
-            target="_blank" 
+
+          <div className="hidden items-center gap-3 md:flex">
+            <span className="glass-pill inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-4 text-xs text-gray-300 backdrop-blur-xl">
+              <Sparkles className="h-4 w-4 text-cyan-300" />
+              Android · WebView · Eruda
+            </span>
+
+            <a
+              href="https://github.com/SANDRO00O/ConsoleFlow-mobile"
+              target="_blank"
+              rel="noreferrer"
+              className="glass-pill inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-black/45 px-5 text-sm font-medium text-gray-200 backdrop-blur-xl transition-colors hover:bg-white/10"
+            >
+              <Github className="h-5 w-5" />
+              GitHub
+            </a>
+          </div>
+
+          <a
+            href="https://github.com/SANDRO00O/ConsoleFlow-mobile"
+            target="_blank"
             rel="noreferrer"
-            className="flex items-center h-12 gap-2 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full px-5 text-gray-400 hover:text-white transition-colors hover:bg-white/10 active:bg-white/20 shadow-lg shadow-black/20 text-sm font-medium"
+            className="glass-pill inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-black/45 px-4 text-sm font-medium text-gray-200 backdrop-blur-xl transition-colors hover:bg-white/10 md:hidden"
           >
-            <Github className="w-5 h-5" />
-            <span className="hidden sm:inline">GitHub</span>
+            <Github className="h-5 w-5" />
           </a>
         </div>
       </nav>
 
-      <div className="flex-grow z-10">
-        {children}
-      </div>
+      <main className="relative z-10 pt-24">{children}</main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 mt-10 relative z-10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col items-center gap-8">
-          <img 
-            src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.svg" 
-            alt="ConsoleFlow Banner" 
-            className="w-56 sm:w-64 object-contain drop-shadow-2xl opacity-90 hover:opacity-100 transition-opacity"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full">
-            <div className="text-gray-500 text-sm font-mono flex items-center gap-4 flex-wrap justify-center md:justify-start">
-              <span>© {new Date().getFullYear()} ConsoleFlow. MIT License.</span>
-              <span className="hidden md:inline text-white/20">|</span>
-              <Link to="/faq" className="hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60">FAQ</Link>
-              <Link to="/privacy" className="hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Privacy Policy</Link>
+      <footer className="relative z-10 mt-16 border-t border-white/8">
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+            <div className="space-y-4">
+              <img
+                src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/screenshots/banner.svg"
+                alt="ConsoleFlow Banner"
+                className="h-7 w-auto object-contain opacity-90"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <p className="max-w-xl text-sm leading-6 text-gray-500">
+                ConsoleFlow is a lightweight Android browser built for developers who want to inspect pages, run scripts, and keep the debugging loop inside the phone.
+              </p>
             </div>
-            <div className="text-gray-500 text-sm font-mono text-center md:text-right">
-              Built by <a href="https://karrarnazim.space" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white transition-colors underline underline-offset-4 decoration-white/20 hover:decoration-white/60">Karrar Nazim</a>
+
+            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+              <span>© {new Date().getFullYear()} ConsoleFlow. MIT License.</span>
+              <span className="hidden text-white/20 md:inline">|</span>
+              <Link to="/faq" className="transition-colors hover:text-white">
+                FAQ
+              </Link>
+              <Link to="/privacy" className="transition-colors hover:text-white">
+                Privacy Policy
+              </Link>
+              <span className="hidden text-white/20 md:inline">|</span>
+              <span>
+                Built by{' '}
+                <a
+                  href="https://karrarnazim.space"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-gray-300 underline decoration-white/20 underline-offset-4 transition-colors hover:text-white hover:decoration-white/60"
+                >
+                  Karrar Nazim
+                </a>
+              </span>
             </div>
           </div>
         </div>

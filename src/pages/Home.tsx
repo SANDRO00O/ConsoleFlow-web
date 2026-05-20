@@ -1,6 +1,7 @@
-import { Download, Github, Terminal, LayoutTemplate, Zap, Shield } from 'lucide-react';
+import { Download, Github, LayoutTemplate, Shield, Terminal, Zap, ArrowRight, MonitorSmartphone, Code2, Layers3, CircleDot } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import Markdown from 'react-markdown';
 
 const GITHUB_REPO = 'SANDRO00O/ConsoleFlow-mobile';
@@ -24,16 +25,80 @@ interface Release {
   assets: ReleaseAsset[];
 }
 
-const FadeIn = ({ children, delay = 0, className = "" }: { children: React.ReactNode, delay?: number, className?: string }) => (
+const sectionFade = {
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+};
+
+const FadeIn = ({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) => (
   <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+    variants={sectionFade}
+    initial="initial"
+    whileInView="animate"
+    viewport={{ once: true, amount: 0.2 }}
+    transition={{ duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] }}
     className={className}
   >
     {children}
   </motion.div>
 );
+
+function formatDate(value: string) {
+  return new Date(value).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function FeatureCard({
+  icon,
+  title,
+  text,
+  className = '',
+}: {
+  icon: ReactNode;
+  title: string;
+  text: string;
+  className?: string;
+}) {
+  return (
+    <div className={`rounded-[28px] border border-white/8 bg-white/[0.03] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.18)] backdrop-blur-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/[0.05] ${className}`}>
+      <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-gray-200">
+        {icon}
+      </div>
+      <h3 className="text-xl font-semibold tracking-tight text-white">{title}</h3>
+      <p className="mt-3 max-w-prose text-sm leading-6 text-gray-400">{text}</p>
+    </div>
+  );
+}
+
+function ScreenshotFrame({
+  src,
+  alt,
+  className = '',
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+}) {
+  const [hidden, setHidden] = useState(false);
+
+  if (hidden) return null;
+
+  return (
+    <div className={`relative overflow-hidden rounded-[34px] border border-white/10 bg-[#0a0a0a] shadow-[0_30px_90px_rgba(0,0,0,0.45)] ${className}`}>
+      <div className="absolute left-1/2 top-2 z-20 h-1 w-16 -translate-x-1/2 rounded-full bg-white/10" />
+      <div className="absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-white/[0.08] to-transparent" />
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-cover"
+        onError={() => setHidden(true)}
+      />
+    </div>
+  );
+}
 
 export default function Home() {
   const [releases, setReleases] = useState<Release[]>([]);
@@ -42,204 +107,363 @@ export default function Home() {
 
   useEffect(() => {
     fetch(GITHUB_API)
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         return res.json();
       })
-      .then(data => {
-        if (Array.isArray(data)) {
-          setReleases(data);
-        }
+      .then((data) => {
+        if (Array.isArray(data)) setReleases(data);
         setLoadingReleases(false);
       })
-      .catch(err => {
-        console.error("Failed to fetch releases:", err);
+      .catch((err) => {
+        console.error('Failed to fetch releases:', err);
         setFetchError(true);
         setLoadingReleases(false);
       });
   }, []);
 
-  const latestStableIndex = releases.findIndex(r => !r.prerelease);
+  const latestStableIndex = useMemo(() => releases.findIndex((r) => !r.prerelease), [releases]);
   const latestRelease = latestStableIndex >= 0 ? releases[latestStableIndex] : releases[0];
 
-  const downloadUrl = latestRelease?.assets?.find(a => a.name.endsWith('.apk'))?.browser_download_url
-    ?? latestRelease?.html_url
-    ?? `${GITHUB_URL}/releases/latest`;
+  const downloadUrl =
+    latestRelease?.assets?.find((a) => a.name.endsWith('.apk'))?.browser_download_url ??
+    latestRelease?.html_url ??
+    `${GITHUB_URL}/releases/latest`;
 
-  const badgeLabel = releases.length > 0
-    ? `${latestRelease?.tag_name ?? ''} Release`
-    : loadingReleases ? 'Loading...' : 'No releases';
+  const releaseLabel = releases.length > 0 ? `${latestRelease?.tag_name ?? ''} release` : loadingReleases ? 'Loading releases…' : 'No release data';
+
+  const stats = [
+    { label: 'Console injected automatically', value: 'Eruda' },
+    { label: 'Desktop mode for testing', value: 'UA switch' },
+    { label: 'Custom JavaScript support', value: 'Per page' },
+  ];
 
   return (
-    <main className="pt-32 pb-20 px-6 min-h-screen">
-      {/* Hero Section */}
-      <div className="max-w-4xl mx-auto text-center">
+    <main className="px-4 pb-20 sm:px-6">
+      <section className="mx-auto grid max-w-6xl items-center gap-12 py-10 md:grid-cols-[1.05fr_0.95fr] md:py-16">
+        <div className="max-w-2xl">
+          <FadeIn>
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-gray-300">
+              <CircleDot className="h-3.5 w-3.5 text-cyan-300" />
+              Android browser for debugging
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.08}>
+            <h1 className="mt-6 text-5xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
+              Desktop debugging.
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-cyan-200">
+                On your mobile.
+              </span>
+            </h1>
+          </FadeIn>
+
+          <FadeIn delay={0.16}>
+            <p className="mt-6 max-w-xl text-lg leading-8 text-gray-400 sm:text-xl">
+              A lightweight Android web browser made for inspection, console work, and quick script testing — with Eruda injected into every page and a dark visual system that stays out of the way.
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={0.24}>
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <a
+                href={downloadUrl}
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5 hover:bg-gray-200"
+              >
+                <Download className="h-5 w-5 transition-transform group-hover:-translate-y-0.5" />
+                Download APK
+              </a>
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-6 py-4 text-sm font-semibold text-white transition-colors hover:bg-white/[0.08]"
+              >
+                <Github className="h-5 w-5" />
+                Source Code
+              </a>
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.32}>
+            <div className="mt-8 flex flex-wrap gap-3 text-sm text-gray-400">
+              {stats.map((item) => (
+                <div key={item.label} className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2">
+                  <span className="text-gray-200">{item.value}</span>
+                  <span className="mx-2 text-white/20">·</span>
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+
+        <FadeIn delay={0.14}>
+          <div className="relative">
+            <div className="absolute -left-4 top-14 hidden h-24 w-24 rounded-full bg-cyan-500/15 blur-2xl md:block" />
+            <div className="absolute -right-6 bottom-8 hidden h-28 w-28 rounded-full bg-violet-500/15 blur-2xl md:block" />
+
+            <div className="rounded-[34px] border border-white/10 bg-white/[0.03] p-4 shadow-[0_30px_100px_rgba(0,0,0,0.42)] backdrop-blur-sm">
+              <div className="flex items-center justify-between rounded-[24px] border border-white/10 bg-black/40 px-4 py-3">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-gray-500">Latest build</p>
+                  <p className="mt-1 text-sm font-medium text-gray-200">{releaseLabel}</p>
+                </div>
+                <div className="rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1 text-[11px] font-medium text-green-400">
+                  Ready to install
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-4 lg:grid-cols-[1.12fr_0.88fr]">
+                <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0a0a0a]">
+                  <ScreenshotFrame
+                    src={`${GITHUB_RAW}/screenshots/1.jpg`}
+                    alt="ConsoleFlow screenshot 1"
+                    className="aspect-[9/18]"
+                  />
+                </div>
+
+                <div className="grid gap-4">
+                  <div className="rounded-[24px] border border-white/8 bg-white/[0.04] p-5">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
+                        <MonitorSmartphone className="h-5 w-5 text-cyan-300" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-white">Mobile-first shell</p>
+                        <p className="text-xs text-gray-500">Built for touch and quick context switching</p>
+                      </div>
+                    </div>
+                    <p className="text-sm leading-6 text-gray-400">
+                      The UI keeps the browser content readable, while the overlay console stays available without turning the page into a dashboard.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                    <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                      <div className="flex items-center gap-3">
+                        <Code2 className="h-5 w-5 text-gray-300" />
+                        <p className="text-sm font-medium text-gray-200">Script injection</p>
+                      </div>
+                      <p className="mt-3 text-sm leading-6 text-gray-400">
+                        Run your own JavaScript alongside Eruda on every page load.
+                      </p>
+                    </div>
+                    <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+                      <div className="flex items-center gap-3">
+                        <Layers3 className="h-5 w-5 text-gray-300" />
+                        <p className="text-sm font-medium text-gray-200">Desktop mode</p>
+                      </div>
+                      <p className="mt-3 text-sm leading-6 text-gray-400">
+                        Switch the browsing context when you need a more realistic page rendering.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
+      <section className="mx-auto max-w-6xl py-10">
         <FadeIn>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-gray-300 mb-8">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            {badgeLabel}
+          <div className="mb-6 flex items-center gap-3">
+            <span className="h-px flex-1 bg-gradient-to-r from-white/0 via-white/20 to-white/0" />
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-gray-400">Interface notes</span>
+            <span className="h-px flex-1 bg-gradient-to-r from-white/0 via-white/20 to-white/0" />
           </div>
         </FadeIn>
-        
-        <FadeIn delay={0.1}>
-          <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight mb-6 leading-[1.1]">
-            Desktop debugging.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-600">
-              On your mobile.
-            </span>
-          </h1>
-        </FadeIn>
-        
-        <FadeIn delay={0.2}>
-          <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            A lightweight, developer-focused Android web browser that automatically injects the Eruda console into every page.
-          </p>
-        </FadeIn>
 
-        <FadeIn delay={0.3}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a 
-              href={downloadUrl}
-              className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-xl font-medium hover:bg-gray-200 transition-colors active:bg-gray-300 w-full sm:w-auto justify-center"
-            >
-              <Download className="w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
-              Download APK
-            </a>
-            <a 
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2 bg-white/5 text-white border border-white/10 px-8 py-4 rounded-xl font-medium hover:bg-white/10 transition-colors active:bg-white/20 w-full sm:w-auto justify-center"
-            >
-              <Github className="w-5 h-5" />
-              Source Code
-            </a>
-          </div>
-        </FadeIn>
-      </div>
-
-      {/* Screenshots */}
-      <div className="max-w-5xl mx-auto mt-32">
-        <FadeIn delay={0.1}>
-          <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-8 text-center">Interface</h2>
-        </FadeIn>
-        <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 snap-x snap-mandatory custom-scrollbar gap-6 pb-8 -mx-6 px-6 sm:mx-0 sm:px-0">
-          {[1, 2, 3, 4].map((num, i) => (
-            <FadeIn key={num} delay={0.2 + (i * 0.1)} className="flex-none w-[75%] sm:w-auto snap-center">
-              <div className="relative mx-auto border-4 border-white/10 rounded-2xl overflow-hidden bg-[#050505] aspect-[9/19.5] shadow-2xl shadow-black/50 group">
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-white/10 rounded-full z-20"></div>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-20 h-1 bg-white/10 rounded-full z-20"></div>
-                <img 
-                  src={`${GITHUB_RAW}/screenshots/${num}.jpg`}
-                  alt={`App Interface ${num}`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  onError={(e) => {
-                    const parent = e.currentTarget.parentElement;
-                    if (parent) parent.style.display = 'none';
-                  }}
+        <div className="grid gap-4 md:grid-cols-12">
+          <FadeIn className="md:col-span-7">
+            <div className="rounded-[32px] border border-white/8 bg-white/[0.03] p-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ScreenshotFrame
+                  src={`${GITHUB_RAW}/screenshots/2.jpg`}
+                  alt="ConsoleFlow screenshot 2"
+                  className="aspect-[9/15] sm:aspect-[9/17]"
                 />
+                <div className="grid gap-4">
+                  <ScreenshotFrame
+                    src={`${GITHUB_RAW}/screenshots/3.jpg`}
+                    alt="ConsoleFlow screenshot 3"
+                    className="aspect-[9/10]"
+                  />
+                  <ScreenshotFrame
+                    src={`${GITHUB_RAW}/screenshots/4.jpg`}
+                    alt="ConsoleFlow screenshot 4"
+                    className="aspect-[9/10]"
+                  />
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+
+          <div className="md:col-span-5 grid gap-4">
+            <FadeIn delay={0.08}>
+              <div className="rounded-[32px] border border-white/8 bg-gradient-to-br from-white/[0.05] to-white/[0.02] p-6">
+                <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Why it feels natural</p>
+                <p className="mt-3 max-w-sm text-2xl font-semibold tracking-tight text-white">
+                  Fewer repeated boxes, clearer differences between sections, and a calmer rhythm between text and imagery.
+                </p>
               </div>
             </FadeIn>
-          ))}
+
+            <FadeIn delay={0.16}>
+              <div className="rounded-[32px] border border-white/8 bg-white/[0.03] p-6">
+                <div className="flex items-center gap-3">
+                  <Terminal className="h-5 w-5 text-gray-300" />
+                  <h3 className="text-lg font-semibold text-white">Made for live debugging</h3>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-gray-400">
+                  Inspect DOM, watch console output, check requests, and keep the browser state close to the page you are testing.
+                </p>
+              </div>
+            </FadeIn>
+
+            <FadeIn delay={0.24}>
+              <div className="rounded-[32px] border border-white/8 bg-white/[0.03] p-6">
+                <div className="flex items-center gap-3">
+                  <Shield className="h-5 w-5 text-gray-300" />
+                  <h3 className="text-lg font-semibold text-white">Privacy-first by design</h3>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-gray-400">
+                  The app stays client-side and offline by default, which keeps the debugging loop local to the device.
+                </p>
+              </div>
+            </FadeIn>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Features Bento Grid */}
-      <div className="max-w-5xl mx-auto mt-32">
-        <FadeIn delay={0.1}>
-          <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-8 text-center">Core Features</h2>
+      <section className="mx-auto max-w-6xl py-10">
+        <FadeIn>
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.24em] text-gray-500">Core features</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">A tighter feature grid with more breathing room.</h2>
+            </div>
+            <div className="hidden text-sm text-gray-500 md:block">
+              The shape of the layout now changes by importance instead of repeating the same card size everywhere.
+            </div>
+          </div>
         </FadeIn>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FadeIn delay={0.2} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors md:col-span-2">
-            <Terminal className="w-6 h-6 text-gray-300 mb-6" />
-            <h3 className="text-xl font-semibold text-white mb-3">Auto-Injected Console</h3>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              Eruda is automatically injected into every webpage. Inspect DOM elements, view console logs, check network requests, and execute JavaScript directly from your phone.
-            </p>
-          </FadeIn>
-          
-          <FadeIn delay={0.3} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
-            <LayoutTemplate className="w-6 h-6 text-gray-300 mb-6" />
-            <h3 className="text-xl font-semibold text-white mb-3">Desktop Mode</h3>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              One-tap switch to a real desktop user agent and viewport for accurate testing.
-            </p>
+
+        <div className="grid gap-4 md:grid-cols-12">
+          <FadeIn className="md:col-span-7">
+            <FeatureCard
+              icon={<Terminal className="h-5 w-5" />}
+              title="Auto-injected console"
+              text="Eruda is added automatically on every page so the inspection tools are available as soon as a page loads."
+              className="h-full"
+            />
           </FadeIn>
 
-          <FadeIn delay={0.4} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
-            <Shield className="w-6 h-6 text-gray-300 mb-6" />
-            <h3 className="text-xl font-semibold text-white mb-3">Smart Interception</h3>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              Bypasses interception for major search engines to prevent annoying CAPTCHAs.
-            </p>
+          <FadeIn delay={0.08} className="md:col-span-5">
+            <FeatureCard
+              icon={<LayoutTemplate className="h-5 w-5" />}
+              title="Desktop mode"
+              text="Switch to a desktop user agent and viewport when you need a more realistic testing environment."
+            />
           </FadeIn>
 
-          <FadeIn delay={0.5} className="p-8 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors md:col-span-2">
-            <Zap className="w-6 h-6 text-gray-300 mb-6" />
-            <h3 className="text-xl font-semibold text-white mb-3">Custom JS Injection</h3>
-            <p className="text-gray-400 leading-relaxed text-sm">
-              Add your own custom JavaScript to be executed automatically on every page load. Tailor your debugging environment to your exact needs.
-            </p>
+          <FadeIn delay={0.12} className="md:col-span-5">
+            <FeatureCard
+              icon={<Zap className="h-5 w-5" />}
+              title="Custom JS injection"
+              text="Store your own JavaScript and run it across pages to test helpers, tweaks, and one-off fixes."
+            />
+          </FadeIn>
+
+          <FadeIn delay={0.16} className="md:col-span-7">
+            <FeatureCard
+              icon={<Shield className="h-5 w-5" />}
+              title="Smart interception"
+              text="The browser uses interception logic to smooth out common roadblocks on major search engines and keep the workflow moving."
+              className="h-full"
+            />
           </FadeIn>
         </div>
-      </div>
+      </section>
 
-      {/* Update Log */}
-      <div className="max-w-4xl mx-auto mt-32">
-        <FadeIn delay={0.1}>
-          <h2 className="text-sm font-mono text-gray-500 uppercase tracking-widest mb-8 text-center">Update Log</h2>
+      <section className="mx-auto max-w-6xl py-10">
+        <FadeIn>
+          <div className="mb-8 flex items-center gap-3">
+            <span className="h-px flex-1 bg-gradient-to-r from-white/0 via-white/20 to-white/0" />
+            <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-gray-400">Update log</span>
+            <span className="h-px flex-1 bg-gradient-to-r from-white/0 via-white/20 to-white/0" />
+          </div>
         </FadeIn>
-        
-        <div className="space-y-6">
+
+        <div className="space-y-4">
           {loadingReleases ? (
-            <div className="text-center text-gray-500 font-mono text-sm animate-pulse">Loading releases...</div>
+            <div className="rounded-[28px] border border-white/8 bg-white/[0.03] p-8 text-center text-sm text-gray-500">
+              Loading release notes…
+            </div>
           ) : fetchError ? (
-            <div className="text-center text-gray-500 font-mono text-sm">
+            <div className="rounded-[28px] border border-white/8 bg-white/[0.03] p-8 text-center text-sm text-gray-500">
               Could not load releases.{' '}
-              <a href={`${GITHUB_URL}/releases`} target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white underline">
+              <a
+                href={`${GITHUB_URL}/releases`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-gray-200 underline decoration-white/20 underline-offset-4 hover:decoration-white/60"
+              >
                 View on GitHub
               </a>
             </div>
           ) : releases.length > 0 ? (
-            releases.map((release, i) => (
-              <FadeIn key={release.id} delay={0.2 + (i * 0.1)}>
-                <div className="p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                    <h3 className="text-xl font-semibold text-white flex flex-wrap items-center gap-3">
-                      {release.name || release.tag_name}
-                      {release.prerelease ? (
-                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full border border-yellow-500/40 text-yellow-500 bg-yellow-500/10">
-                          Pre-release
-                        </span>
-                      ) : i === latestStableIndex ? (
-                        <span className="text-[11px] font-medium px-2 py-0.5 rounded-full border border-green-500/40 text-green-500 bg-green-500/10">
-                          Latest
-                        </span>
-                      ) : null}
-                      <span className="text-xs font-mono px-2.5 py-1 rounded-md bg-white/10 text-gray-300">
-                        {new Date(release.published_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                      </span>
-                    </h3>
-                    <a 
-                      href={release.html_url} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5"
-                    >
-                      <Github className="w-4 h-4" /> View Release
-                    </a>
-                  </div>
-                  <div className="markdown-body text-gray-400 text-sm leading-relaxed break-words overflow-hidden">
-                    <Markdown>{release.body}</Markdown>
-                  </div>
-                </div>
-              </FadeIn>
-            ))
+            releases.map((release, index) => {
+              const isLatestStable = index === latestStableIndex;
+              return (
+                <FadeIn key={release.id} delay={0.06 + index * 0.05}>
+                  <article className="rounded-[30px] border border-white/8 bg-white/[0.03] p-6 shadow-[0_20px_60px_rgba(0,0,0,0.18)] transition-colors hover:bg-white/[0.05]">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="text-xl font-semibold tracking-tight text-white">{release.name || release.tag_name}</h3>
+                          {release.prerelease ? (
+                            <span className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-1 text-[11px] font-medium text-yellow-300">
+                              Pre-release
+                            </span>
+                          ) : isLatestStable ? (
+                            <span className="rounded-full border border-green-500/30 bg-green-500/10 px-2.5 py-1 text-[11px] font-medium text-green-300">
+                              Latest
+                            </span>
+                          ) : null}
+                          <span className="rounded-full border border-white/10 bg-black/30 px-2.5 py-1 text-[11px] font-medium text-gray-400">
+                            {formatDate(release.published_at)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-500">{release.tag_name}</p>
+                      </div>
+
+                      <a
+                        href={release.html_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-gray-200 transition-colors hover:bg-white/[0.08]"
+                      >
+                        <Github className="h-4 w-4" />
+                        View release
+                      </a>
+                    </div>
+
+                    <div className="markdown-body mt-5 max-w-none overflow-hidden text-sm leading-7 text-gray-400">
+                      <Markdown>{release.body || 'No release notes were provided.'}</Markdown>
+                    </div>
+                  </article>
+                </FadeIn>
+              );
+            })
           ) : (
-            <div className="text-center text-gray-500 font-mono text-sm">No releases found.</div>
+            <div className="rounded-[28px] border border-white/8 bg-white/[0.03] p-8 text-center text-sm text-gray-500">
+              No releases found.
+            </div>
           )}
         </div>
-      </div>
+      </section>
     </main>
   );
 }
