@@ -1,7 +1,7 @@
 {
   "name": "ConsoleFlow | Developer Web Browser",
   "short_name": "ConsoleFlow",
-  "description": "ConsoleFlow is a lightweight Android browser for inspection and testing.",
+  "description": "ConsoleFlow is a lightweight, developer-focused Android web browser that automatically injects the Eruda console into web pages for seamless mobile debugging.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#050505",
