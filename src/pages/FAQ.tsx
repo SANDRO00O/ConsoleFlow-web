@@ -6,25 +6,25 @@ const faqs = [
   {
     question: 'What is ConsoleFlow Mobile?',
     answer:
-      'It is a lightweight Android web browser created for developers. It injects the Eruda console into pages so you can inspect DOM, Console, and Network directly on the phone.',
+      'It is a lightweight Android browser built for debugging and quick checks on mobile.',
   },
   {
     question: 'Do I need to root my device?',
-    answer: 'No. ConsoleFlow works on standard Android devices without root access.',
+    answer: 'No. It works on standard Android devices without root access.',
   },
   {
     question: 'Does it work on iOS?',
     answer: 'At the moment, ConsoleFlow is only available for Android through APK download.',
   },
   {
-    question: 'Why do some websites block the app?',
+    question: 'Why do some websites behave differently?',
     answer:
-      'Some strict websites block WebView-based browsers or custom user agents. ConsoleFlow includes interception logic for common cases, but highly protected sites can still resist it.',
+      'Some strict websites block WebView-based browsers or custom user agents. ConsoleFlow handles common cases, but highly protected sites can still resist it.',
   },
   {
-    question: 'Can I inject my own scripts?',
+    question: 'Can I run my own scripts?',
     answer:
-      'Yes. There is a setting in the app for custom JavaScript, and it runs together with the Eruda console on page load.',
+      'Yes. You can add custom JavaScript that runs on page load for your own testing workflow.',
   },
 ];
 

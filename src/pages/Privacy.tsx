@@ -11,7 +11,7 @@ const sections = [
   {
     title: '2. Third-Party Services',
     body:
-      'The app acts as a browser wrapper. When you visit a website, that site’s own privacy policy applies. The injected Eruda console runs locally in the browser context.',
+      'The app acts as a browser wrapper. When you visit a website, that site’s own privacy policy applies. The embedded console runs locally in the browser context.',
   },
   {
     title: '3. Permissions',

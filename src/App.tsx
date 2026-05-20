@@ -1,4 +1,4 @@
-import { Github, Sparkles } from 'lucide-react';
+import { Github } from 'lucide-react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import FAQ from './pages/FAQ';
@@ -8,19 +8,11 @@ import type { ReactNode } from 'react';
 function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="site-shell min-h-screen overflow-x-hidden bg-[#050505] text-gray-200 font-sans selection:bg-white/15 selection:text-white">
-      <div className="site-backdrop pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="site-grid absolute inset-0 opacity-[0.18]" />
-        <div className="site-vignette absolute inset-0" />
-        <div className="site-orb site-orb-a" />
-        <div className="site-orb site-orb-b" />
-        <div className="site-orb site-orb-c" />
-      </div>
-
-      <nav className="fixed top-0 left-0 right-0 z-50">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link
             to="/"
-            className="glass-pill group flex h-12 items-center gap-3 rounded-full border border-white/10 bg-black/45 px-2 pr-5 shadow-[0_10px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl transition-colors hover:bg-white/[0.06]"
+            className="group flex h-12 items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-2 pr-5 transition-colors hover:bg-white/[0.06]"
             aria-label="ConsoleFlow home"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/[0.04] ring-1 ring-white/10">
@@ -40,31 +32,17 @@ function Layout({ children }: { children: ReactNode }) {
             />
           </Link>
 
-          <div className="hidden items-center gap-3 md:flex">
-            <span className="glass-pill inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-black/35 px-4 text-xs text-gray-300 backdrop-blur-xl">
-              <Sparkles className="h-4 w-4 text-cyan-300" />
-              Android · WebView · Eruda
-            </span>
-
+          <div className="flex items-center gap-3">
             <a
               href="https://github.com/SANDRO00O/ConsoleFlow-mobile"
               target="_blank"
               rel="noreferrer"
-              className="glass-pill inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-black/45 px-5 text-sm font-medium text-gray-200 backdrop-blur-xl transition-colors hover:bg-white/10"
+              className="inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-5 text-sm font-medium text-gray-200 transition-colors hover:bg-white/[0.1]"
             >
               <Github className="h-5 w-5" />
               GitHub
             </a>
           </div>
-
-          <a
-            href="https://github.com/SANDRO00O/ConsoleFlow-mobile"
-            target="_blank"
-            rel="noreferrer"
-            className="glass-pill inline-flex h-12 items-center gap-2 rounded-full border border-white/10 bg-black/45 px-4 text-sm font-medium text-gray-200 backdrop-blur-xl transition-colors hover:bg-white/10 md:hidden"
-          >
-            <Github className="h-5 w-5" />
-          </a>
         </div>
       </nav>
 
@@ -83,7 +61,7 @@ function Layout({ children }: { children: ReactNode }) {
                 }}
               />
               <p className="max-w-xl text-sm leading-6 text-gray-500">
-                ConsoleFlow is a lightweight Android browser built for developers who want to inspect pages, run scripts, and keep the debugging loop inside the phone.
+                ConsoleFlow is a lightweight Android browser for pages that need inspection, console output, and small testing workflows.
               </p>
             </div>
 
