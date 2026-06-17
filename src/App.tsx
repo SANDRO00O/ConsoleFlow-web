@@ -26,7 +26,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           <Link to="/" className="flex items-center h-12 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full pl-2 pr-5 shadow-lg shadow-black/20 hover:bg-white/5 transition-colors">
             <div className="w-9 h-9 flex items-center justify-center">
               <img 
-                src="https://raw.githubusercontent.com/SANDRO00O/ConsoleFlow-mobile/master/app/src/main/res/drawable/ic_splashscreen.png" 
+                src="/assets/images/icon-512.png" 
                 alt="ConsoleFlow Logo" 
                 className="w-full h-full object-contain scale-[1.6]"
               />
